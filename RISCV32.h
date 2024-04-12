@@ -13,34 +13,39 @@ class RISCV32 {
         
         // 0 for disallowing debug mode, 1 for allowing
         static int debug_mode;
-    protected:
+        
+        // program counter
+        static uint32_t pc;
+        static uint32_t pc_next;
+
         static uint32_t reg32[32] /* = {0, } */;
           
         void execute32(uint32_t instr);
         
         class Memory32 {
             private:
-                uint8_t mem[MEM_SIZE] /* = {0, } */;
+                static uint8_t mem[MEM_SIZE] /* = {0, } */;
             
             public:
-                void read_mem_u8(uint32_t addr, uint8_t* data);
-                void read_mem_u16(uint32_t addr, uint16_t* data);
-                void read_mem_u32(uint32_t addr, uint32_t* data);
-                void write_mem_u8(uint32_t addr, uint8_t data);
-                void write_mem_u16(uint32_t addr, uint16_t data);
-                void write_mem_u32(uint32_t addr, uint32_t data);
-                
-                void print_mem_all();
-                void print_mem_u8(uint32_t addr);
-                void print_mem_u16(uint32_t addr);
-                void print_mem_u32(uint32_t addr);
+                static void read_mem_u8(uint32_t addr, uint8_t* data);
+                static void read_mem_u16(uint32_t addr, uint16_t* data);
+                static void read_mem_u32(uint32_t addr, uint32_t* data);
+                static void write_mem_u8(uint32_t addr, uint8_t data);
+                static void write_mem_u16(uint32_t addr, uint16_t data);
+                static void write_mem_u32(uint32_t addr, uint32_t data);
+               
+                static void read_program(const char* program_file);
+
+                static void print_mem_all();
+                static void print_mem_u8(uint32_t addr);
+                static void print_mem_u16(uint32_t addr);
+                static void print_mem_u32(uint32_t addr);
         };
+        static uint32_t imm_gen(uint32_t instr);
 
         // Instructions
         class base_I32 {
             public:
-                base_I32();
-
                 // Instructions
                 // U-type 
                 static void lui(uint32_t rd, uint32_t imm);
@@ -98,30 +103,33 @@ class RISCV32 {
         class ext_M32 {
             private:
                 // 0 for not extended, 1 for extended
-                bool extended;
+                static bool extended;
 
             public:
-                ext_M32(bool ext);
+                static void extend(bool ext);
         };
         class ext_A32 {
             private:
                 // 0 for not extended, 1 for extended
-                bool extended;
+                static bool extended;
             
             public:
-                ext_A32(bool ext);
+                static void extend(bool ext);
         };
         class ext_F32 {
             private:
                 // 0 for not extended, 1 for extended
-                bool extended;
+                static bool extended;
             
             public:
-                ext_F32(bool ext);
+                static void extend(bool ext);
         };
 
     public:
-        RISCV32(int mem_access, int debug, bool M, bool A, bool F);
+        RISCV32(
+            bool mem_access, bool debug, bool M, bool A, bool F,
+            const char* program_file, uint32_t mem_start, uint32_t entrypoint
+        );
         void run();
         static void print_inst(uint32_t pc, std::string msg);
 };
