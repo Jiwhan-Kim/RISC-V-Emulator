@@ -20,14 +20,35 @@ RISCV32::RISCV32(
 
     // Initialize program
     Memory32::read_program(program_file);
+    
+    // Status
+    running = false;
 
-    mem_start_addr = mem_start;
+    // mem_start_addr = mem_start;
     pc = entrypoint;
     pc_next = pc + 4;
 }
 
 void RISCV32::run() {
-    
+    running = true;
+    reg32[0] = 0;
+    reg32[2] = MEM_SIZE - 1; // stack pointer at the largest address
+
+    while (running) {
+        pc_next = pc + 4;
+        
+        uint32_t instr;
+        Memory32::read_mem_u32(pc, &instr);
+
+        if (instr == 0x00000000) { // noop
+            running = false;
+            break;
+        }
+        
+        execute32(instr);
+
+        pc = pc_next;
+    }
 }
 
 void RISCV32::print_inst(uint32_t pc, std::string msg) {
@@ -380,11 +401,6 @@ void RISCV32::Memory32::print_mem_u32(uint32_t addr) {
     uint32_t data;
     read_mem_u32(addr, &data);
     std::cout << "Memory[" << addr << "]: " << std::hex << (int)data << std::endl;
-}
-
-// Instructions
-RISCV32::base_I32::base_I32() {
-    // Nothing to do..!
 }
 
 // U-type

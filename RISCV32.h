@@ -14,6 +14,9 @@ class RISCV32 {
         // 0 for disallowing debug mode, 1 for allowing
         static int debug_mode;
         
+        // Status
+        bool running;
+
         // program counter
         static uint32_t pc;
         static uint32_t pc_next;
