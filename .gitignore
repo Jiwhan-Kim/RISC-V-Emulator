@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# Binaries
+*.bin
+out_binary
