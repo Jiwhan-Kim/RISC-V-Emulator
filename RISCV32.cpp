@@ -5,18 +5,28 @@
 
 #include <fstream>
 
+// Global Variables
+int RISCV32::mem_access_align;
+int RISCV32::debug_mode;
+uint32_t RISCV32::pc;
+uint32_t RISCV32::pc_next;
 uint32_t RISCV32::reg32[32];
-uint8_t RISCV32::Memory32::mem[MEM_SIZE];
+uint8_t RISCV32::Memory32::mem[MEM_SIZE]; // Initialized all to 0
+
+// bool RISCV32::ext_M32::extended;
+// bool RISCV32::ext_A32::extended;
+// bool RISCV32::ext_F32::extended;
 
 RISCV32::RISCV32(
     bool mem_access, bool debug, bool M, bool A, bool F,
     const char* program_file, uint32_t mem_start, uint32_t entrypoint
     ) {
     mem_access_align = mem_access;
-    debug_mode = debug;
-    ext_M32::extend(M);
-    ext_A32::extend(A);
-    ext_F32::extend(F);
+    // debug_mode = debug;
+    debug_mode = true;
+    // ext_M32::extend(M);
+    // ext_A32::extend(A);
+    // ext_F32::extend(F);
 
     // Initialize program
     Memory32::read_program(program_file);
@@ -34,7 +44,7 @@ void RISCV32::run() {
     reg32[0] = 0;
     reg32[2] = MEM_SIZE - 1; // stack pointer at the largest address
 
-    while (running) {
+    while (running && pc < 0x100000) {
         pc_next = pc + 4;
         
         uint32_t instr;
@@ -46,17 +56,33 @@ void RISCV32::run() {
         }
         
         execute32(instr);
-
         pc = pc_next;
     }
+
+    std::cout << "Program Ends." << std::endl;
+    RISCV32::
+    RISCV32::Memory32::print_mem_all();
 }
 
 void RISCV32::print_inst(uint32_t pc, std::string msg) {
-    if (debug_mode == 0) return;
+    if (RISCV32::debug_mode == 0) return;
     std::cout << "pc: ";
     std::cout.width(8);
     std::cout.fill('0');
     std::cout << std::hex << pc << ": " << msg << std::endl;
+}
+
+void RISCV32::print_reg_all() {
+    std::cout << "Register" << std::endl;
+    std::cout << "--------------------" << std::endl;
+    for (int i = 0; i < 32; i++) {
+        std::cout << "x[";
+        std::cout.width(2);
+        std::cout << std::hex << i << "] = ";
+        std::cout.width(8);
+        std::cout.fill('0');
+        std::cout << std::hex << RISCV32::reg32[i] << std::endl;
+    }
 }
 
 uint32_t RISCV32::imm_gen(uint32_t instr) {

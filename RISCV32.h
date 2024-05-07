@@ -22,7 +22,7 @@ class RISCV32 {
         static uint32_t pc_next;
 
         static uint32_t reg32[32] /* = {0, } */;
-          
+        static void print_reg_all();  
         void execute32(uint32_t instr);
         
         class Memory32 {
@@ -103,6 +103,7 @@ class RISCV32 {
                 static void or_(uint32_t rd, uint32_t rs1, uint32_t rs2);
                 static void and_(uint32_t rd, uint32_t rs1, uint32_t rs2);
         };
+        /*
         class ext_M32 {
             private:
                 // 0 for not extended, 1 for extended
@@ -127,6 +128,7 @@ class RISCV32 {
             public:
                 static void extend(bool ext);
         };
+        */
 
     public:
         RISCV32(
