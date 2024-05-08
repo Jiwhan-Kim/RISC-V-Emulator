@@ -1,6 +1,7 @@
 #include <cstdint>
 #include <string>
 
+#define END 0xFFFFFFFF
 #define MEM_SIZE 0x10000
 #define INSTR_ERR throw std::runtime_error("Invalid instruction")
 #define MEM_ALIGN_ERR throw std::runtime_error("Unaligned memory access")

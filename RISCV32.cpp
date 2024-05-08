@@ -36,31 +36,30 @@ RISCV32::RISCV32(
 
     // mem_start_addr = mem_start;
     pc = entrypoint;
-    pc_next = pc + 4;
+    pc_next = pc;
 }
 
 void RISCV32::run() {
     running = true;
     reg32[0] = 0;
+    reg32[1] = END; // to end the program when main
     reg32[2] = MEM_SIZE - 1; // stack pointer at the largest address
 
-    while (running && pc < 0x100000) {
+    while (running && pc_next != (END & 0xFFFFFFFE) ) {
+        pc = pc_next;
         pc_next = pc + 4;
-        
         uint32_t instr;
         Memory32::read_mem_u32(pc, &instr);
 
         if (instr == 0x00000000) { // noop
             running = false;
             break;
-        }
-        
+        } 
         execute32(instr);
-        pc = pc_next;
     }
 
     std::cout << "Program Ends." << std::endl;
-    RISCV32::
+    RISCV32::print_reg_all();
     RISCV32::Memory32::print_mem_all();
 }
 
@@ -73,16 +72,20 @@ void RISCV32::print_inst(uint32_t pc, std::string msg) {
 }
 
 void RISCV32::print_reg_all() {
-    std::cout << "Register" << std::endl;
-    std::cout << "--------------------" << std::endl;
+    std::ofstream output_reg;
+    output_reg.open("./output/register.txt");
+
+    output_reg << "Register" << std::endl;
+    output_reg << "--------------------" << std::endl;
     for (int i = 0; i < 32; i++) {
-        std::cout << "x[";
-        std::cout.width(2);
-        std::cout << std::hex << i << "] = ";
-        std::cout.width(8);
-        std::cout.fill('0');
-        std::cout << std::hex << RISCV32::reg32[i] << std::endl;
+        output_reg << "x[";
+        output_reg.width(2);
+        output_reg << std::hex << i << "] = ";
+        output_reg.width(8);
+        output_reg.fill('0');
+        output_reg << std::hex << RISCV32::reg32[i] << std::endl;
     }
+    output_reg.close();
 }
 
 uint32_t RISCV32::imm_gen(uint32_t instr) {
@@ -397,18 +400,22 @@ void RISCV32::Memory32::read_program(const char* program_file) {
 }
 
 void RISCV32::Memory32::print_mem_all() {
-    std::cout << "Memory" << std::endl;
-    std::cout << "  Address |   Data" << std::endl;
-    std::cout << "--------------------" << std::endl;
+    std::ofstream output_mem;
+    output_mem.open("./output/memory.txt");
+
+    output_mem << "Memory" << std::endl;
+    output_mem << "  Address |   Data" << std::endl;
+    output_mem << "--------------------" << std::endl;
     for (int i = 0; i < MEM_SIZE / 4; i++) {
-        std::cout << " ";
-        std::cout.width(8);
-        std::cout << std::hex << i << " | ";
+        output_mem << " ";
+        output_mem.width(8);
+        output_mem << std::hex << (i << 2) << " | ";
         int data = (mem[i * 4 + 3] << 24) | (mem[i * 4 + 2] << 16) | (mem[i * 4 + 1] << 8) | mem[i * 4];
-        std::cout.width(8);
-        std::cout.fill('0');
-        std::cout << std::hex << data << std::endl;
+        output_mem.width(8);
+        output_mem.fill('0');
+        output_mem << std::hex << data << std::endl;
     }
+    output_mem.close();
 }
 
 void RISCV32::Memory32::print_mem_u8(uint32_t addr) {

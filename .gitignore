@@ -34,3 +34,7 @@
 # Binaries
 *.bin
 out_binary
+
+# Log files
+*.log
+*.txt
