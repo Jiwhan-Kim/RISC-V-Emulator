@@ -439,14 +439,14 @@ void RISCV32::Memory32::print_mem_u32(uint32_t addr) {
 // U-type
 void RISCV32::base_I32::lui(uint32_t rd, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "lui " + std::to_string(rd) + ", " + std::to_string(imm));
+        print_inst(pc, "lui x" + std::to_string(rd) + ", " + std::to_string((int32_t)imm));
     }
     if (rd != 0) reg32[rd] = imm;
 }
 
 void RISCV32::base_I32::auipc(uint32_t rd, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "auipc " + std::to_string(rd) + ", " + std::to_string((int32_t)imm));
+        print_inst(pc, "auipc x" + std::to_string(rd) + ", " + std::to_string((int32_t)imm));
     }
     if (rd != 0) reg32[rd] = pc + (int32_t)imm;
 }
@@ -454,7 +454,7 @@ void RISCV32::base_I32::auipc(uint32_t rd, uint32_t imm) {
 // J-type
 void RISCV32::base_I32::jal(uint32_t rd, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "jal " + std::to_string(rd) + ", " + std::to_string((int32_t)imm));
+        print_inst(pc, "jal x" + std::to_string(rd) + ", " + std::to_string((int32_t)imm));
     }
     if (rd != 0) reg32[rd] = pc + 4;
     pc_next = pc + (int32_t)imm;
@@ -463,7 +463,7 @@ void RISCV32::base_I32::jal(uint32_t rd, uint32_t imm) {
 // I-type
 void RISCV32::base_I32::jalr(uint32_t rd, uint32_t rs1, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "jalr " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string((int32_t)imm));
+        print_inst(pc, "jalr x" + std::to_string(rd) + ", " + std::to_string((int32_t)imm) + "(x" + std::to_string(rs1) + ")");
     }
     if (rd != 0) reg32[rd] = pc + 4;
     pc_next = (reg32[rs1] + (int32_t)imm) & 0xFFFFFFFE;
@@ -472,7 +472,7 @@ void RISCV32::base_I32::jalr(uint32_t rd, uint32_t rs1, uint32_t imm) {
 // B-type
 void RISCV32::base_I32::beq(uint32_t rs1, uint32_t rs2, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "beq " + std::to_string(rs1) + ", " + std::to_string(rs2) + ", " + std::to_string((int32_t)imm));
+        print_inst(pc, "beq x" + std::to_string(rs1) + ", x" + std::to_string(rs2) + ", " + std::to_string((int32_t)imm));
     }
     if (reg32[rs1] == reg32[rs2]) {
         pc_next = pc + (int32_t)imm;
@@ -481,7 +481,7 @@ void RISCV32::base_I32::beq(uint32_t rs1, uint32_t rs2, uint32_t imm) {
 
 void RISCV32::base_I32::bne(uint32_t rs1, uint32_t rs2, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "bne " + std::to_string(rs1) + ", " + std::to_string(rs2) + ", " + std::to_string((int32_t)imm));
+        print_inst(pc, "bne x" + std::to_string(rs1) + ", x" + std::to_string(rs2) + ", " + std::to_string((int32_t)imm));
     }
     if (reg32[rs1] != reg32[rs2]) {
         pc_next = pc + (int32_t)imm;
@@ -490,7 +490,7 @@ void RISCV32::base_I32::bne(uint32_t rs1, uint32_t rs2, uint32_t imm) {
 
 void RISCV32::base_I32::blt(uint32_t rs1, uint32_t rs2, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "blt " + std::to_string(rs1) + ", " + std::to_string(rs2) + ", " + std::to_string((int32_t)imm));
+        print_inst(pc, "blt x" + std::to_string(rs1) + ", x" + std::to_string(rs2) + ", " + std::to_string((int32_t)imm));
     }
     if ((int32_t)reg32[rs1] < (int32_t)reg32[rs2]) {
         pc_next = pc + (int32_t)imm;
@@ -499,7 +499,7 @@ void RISCV32::base_I32::blt(uint32_t rs1, uint32_t rs2, uint32_t imm) {
 
 void RISCV32::base_I32::bge(uint32_t rs1, uint32_t rs2, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "bge " + std::to_string(rs1) + ", " + std::to_string(rs2) + ", " + std::to_string((int32_t)imm));
+        print_inst(pc, "bge x" + std::to_string(rs1) + ", x" + std::to_string(rs2) + ", " + std::to_string((int32_t)imm));
     }
     if ((int32_t)reg32[rs1] >= (int32_t)reg32[rs2]) {
         pc_next = pc + (int32_t)imm;
@@ -508,7 +508,7 @@ void RISCV32::base_I32::bge(uint32_t rs1, uint32_t rs2, uint32_t imm) {
 
 void RISCV32::base_I32::bltu(uint32_t rs1, uint32_t rs2, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "bltu " + std::to_string(rs1) + ", " + std::to_string(rs2) + ", " + std::to_string((int32_t)imm));
+        print_inst(pc, "bltu x" + std::to_string(rs1) + ", x" + std::to_string(rs2) + ", " + std::to_string((int32_t)imm));
     }
     if (reg32[rs1] < reg32[rs2]) {
         pc_next = pc + (int32_t)imm;
@@ -517,7 +517,7 @@ void RISCV32::base_I32::bltu(uint32_t rs1, uint32_t rs2, uint32_t imm) {
 
 void RISCV32::base_I32::bgeu(uint32_t rs1, uint32_t rs2, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "bgeu " + std::to_string(rs1) + ", " + std::to_string(rs2) + ", " + std::to_string((int32_t)imm));
+        print_inst(pc, "bgeu x" + std::to_string(rs1) + ", x" + std::to_string(rs2) + ", " + std::to_string((int32_t)imm));
     }
     if (reg32[rs1] >= reg32[rs2]) {
         pc_next = pc + (int32_t)imm;
@@ -527,7 +527,7 @@ void RISCV32::base_I32::bgeu(uint32_t rs1, uint32_t rs2, uint32_t imm) {
 // I-type
 void RISCV32::base_I32::lb(uint32_t rd, uint32_t rs1, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "lb " + std::to_string(rd) + ", " + std::to_string((int32_t)imm) + "(" + std::to_string(rs1) + ")");
+        print_inst(pc, "lb x" + std::to_string(rd) + ", " + std::to_string((int32_t)imm) + "(x" + std::to_string(rs1) + ")");
     }
     uint8_t data;
     Memory32::read_mem_u8(reg32[rs1] + (int32_t)imm, &data);
@@ -536,7 +536,7 @@ void RISCV32::base_I32::lb(uint32_t rd, uint32_t rs1, uint32_t imm) {
 
 void RISCV32::base_I32::lh(uint32_t rd, uint32_t rs1, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "lh " + std::to_string(rd) + ", " + std::to_string((int32_t)imm) + "(" + std::to_string(rs1) + ")"); 
+        print_inst(pc, "lh x" + std::to_string(rd) + ", " + std::to_string((int32_t)imm) + "(x" + std::to_string(rs1) + ")"); 
     }
     uint16_t data;
     Memory32::read_mem_u16(reg32[rs1] + (int32_t)imm, &data);
@@ -545,7 +545,7 @@ void RISCV32::base_I32::lh(uint32_t rd, uint32_t rs1, uint32_t imm) {
 
 void RISCV32::base_I32::lw(uint32_t rd, uint32_t rs1, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "lw " + std::to_string(rd) + ", " + std::to_string((int32_t)imm) + "(" + std::to_string(rs1) + ")");  
+        print_inst(pc, "lw x" + std::to_string(rd) + ", " + std::to_string((int32_t)imm) + "(x" + std::to_string(rs1) + ")");  
     }
     uint32_t data;
     Memory32::read_mem_u32(reg32[rs1] + (int32_t)imm, &data);
@@ -554,7 +554,7 @@ void RISCV32::base_I32::lw(uint32_t rd, uint32_t rs1, uint32_t imm) {
 
 void RISCV32::base_I32::lbu(uint32_t rd, uint32_t rs1, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "lbu " + std::to_string(rd) + ", " + std::to_string((int32_t)imm) + "(" + std::to_string(rs1) + ")"); 
+        print_inst(pc, "lbu x" + std::to_string(rd) + ", " + std::to_string((int32_t)imm) + "(x" + std::to_string(rs1) + ")"); 
     }
     uint8_t data;
     Memory32::read_mem_u8(reg32[rs1] + (int32_t)imm, &data);
@@ -563,7 +563,7 @@ void RISCV32::base_I32::lbu(uint32_t rd, uint32_t rs1, uint32_t imm) {
 
 void RISCV32::base_I32::lhu(uint32_t rd, uint32_t rs1, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "lhu " + std::to_string(rd) + ", " + std::to_string((int32_t)imm) + "(" + std::to_string(rs1) + ")");
+        print_inst(pc, "lhu x" + std::to_string(rd) + ", " + std::to_string((int32_t)imm) + "(x" + std::to_string(rs1) + ")");
     }
     uint16_t data;
     Memory32::read_mem_u16(reg32[rs1] + (int32_t)imm, &data);
@@ -573,21 +573,21 @@ void RISCV32::base_I32::lhu(uint32_t rd, uint32_t rs1, uint32_t imm) {
 // S-type
 void RISCV32::base_I32::sb(uint32_t rs1, uint32_t rs2, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "sb " + std::to_string(rs2) + ", " + std::to_string((int32_t)imm) + "(" + std::to_string(rs1) + ")");
+        print_inst(pc, "sb x" + std::to_string(rs2) + ", " + std::to_string((int32_t)imm) + "(x" + std::to_string(rs1) + ")");
     }
     Memory32::write_mem_u8(reg32[rs1] + (int32_t)imm, reg32[rs2] & 0xFF);
 }
 
 void RISCV32::base_I32::sh(uint32_t rs1, uint32_t rs2, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "sh " + std::to_string(rs2) + ", " + std::to_string((int32_t)imm) + "(" + std::to_string(rs1) + ")");
+        print_inst(pc, "sh x" + std::to_string(rs2) + ", " + std::to_string((int32_t)imm) + "(x" + std::to_string(rs1) + ")");
     }
     Memory32::write_mem_u16(reg32[rs1] + (int32_t)imm, reg32[rs2] & 0xFFFF);
 }
 
 void RISCV32::base_I32::sw(uint32_t rs1, uint32_t rs2, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "sw " + std::to_string(rs2) + ", " + std::to_string((int32_t)imm) + "(" + std::to_string(rs1) + ")");
+        print_inst(pc, "sw x" + std::to_string(rs2) + ", " + std::to_string((int32_t)imm) + "(x" + std::to_string(rs1) + ")");
     }
     Memory32::write_mem_u32(reg32[rs1] + (int32_t)imm, reg32[rs2]);
 }
@@ -595,63 +595,63 @@ void RISCV32::base_I32::sw(uint32_t rs1, uint32_t rs2, uint32_t imm) {
 // I-type
 void RISCV32::base_I32::addi(uint32_t rd, uint32_t rs1, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "addi " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(imm));
+        print_inst(pc, "addi x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", " + std::to_string((int32_t)imm));
     }
     if (rd != 0) reg32[rd] = reg32[rs1] + imm;
 }
 
 void RISCV32::base_I32::slti(uint32_t rd, uint32_t rs1, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "slti " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(imm));
+        print_inst(pc, "slti x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", " + std::to_string((int32_t)imm));
     }
     if (rd != 0) reg32[rd] = (int32_t)reg32[rs1] < (int32_t)imm ? 1 : 0;
 }
 
 void RISCV32::base_I32::sltiu(uint32_t rd, uint32_t rs1, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "sltiu " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(imm));
+        print_inst(pc, "sltiu x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", " + std::to_string((int32_t)imm));
     }
     if (rd != 0) reg32[rd] = reg32[rs1] < imm ? 1 : 0;
 }
 
 void RISCV32::base_I32::xori(uint32_t rd, uint32_t rs1, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "xori " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(imm));
+        print_inst(pc, "xori x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", " + std::to_string((int32_t)imm));
     }
     if (rd != 0) reg32[rd] = reg32[rs1] ^ imm;
 }
 
 void RISCV32::base_I32::ori(uint32_t rd, uint32_t rs1, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "ori " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(imm));
+        print_inst(pc, "ori x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", " + std::to_string((int32_t)imm));
     }
     if (rd != 0) reg32[rd] = reg32[rs1] | imm;
 }
 
 void RISCV32::base_I32::andi(uint32_t rd, uint32_t rs1, uint32_t imm) {
     if (debug_mode == 1) {
-        print_inst(pc, "andi " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(imm));
+        print_inst(pc, "andi x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", " + std::to_string((int32_t)imm));
     }
     if (rd != 0) reg32[rd] = reg32[rs1] & imm;
 }
 
 void RISCV32::base_I32::slli(uint32_t rd, uint32_t rs1, uint32_t shamt) {
     if (debug_mode == 1) {
-        print_inst(pc, "slli " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(shamt));
+        print_inst(pc, "slli x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", " + std::to_string((int32_t)shamt));
     }
     if (rd != 0) reg32[rd] = reg32[rs1] << (shamt & 0x1F); // Only lower 5-bits matters.
 }
 
 void RISCV32::base_I32::srli(uint32_t rd, uint32_t rs1, uint32_t shamt) {
     if (debug_mode == 1) {
-        print_inst(pc, "srli " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(shamt));
+        print_inst(pc, "srli x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", " + std::to_string((int32_t)shamt));
     }
     if (rd != 0) reg32[rd] = reg32[rs1] >> (shamt & 0x1F); // Only lower 5-bits matters.
 }
 
 void RISCV32::base_I32::srai(uint32_t rd, uint32_t rs1, uint32_t shamt) {
     if (debug_mode == 1) {
-        print_inst(pc, "srai " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(shamt));
+        print_inst(pc, "srai x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", " + std::to_string((int32_t)shamt));
     }
     if (rd != 0) reg32[rd] = (int32_t)reg32[rs1] >> (shamt & 0x1F); // Only lower 5-bits matters.
 }
@@ -659,70 +659,70 @@ void RISCV32::base_I32::srai(uint32_t rd, uint32_t rs1, uint32_t shamt) {
 // R-type
 void RISCV32::base_I32::add(uint32_t rd, uint32_t rs1, uint32_t rs2) {
     if (debug_mode == 1) {
-        print_inst(pc, "add " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(rs2));
+        print_inst(pc, "add x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", x" + std::to_string(rs2));
     }
     if (rd != 0) reg32[rd] = reg32[rs1] + reg32[rs2];
 }
 
 void RISCV32::base_I32::sub(uint32_t rd, uint32_t rs1, uint32_t rs2) {
     if (debug_mode == 1) {
-        print_inst(pc, "sub " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(rs2));
+        print_inst(pc, "sub x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", x" + std::to_string(rs2));
     }
     if (rd != 0) reg32[rd] = reg32[rs1] - reg32[rs2];
 }
 
 void RISCV32::base_I32::sll(uint32_t rd, uint32_t rs1, uint32_t rs2) {
     if (debug_mode == 1) {
-        print_inst(pc, "sll " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(rs2));
+        print_inst(pc, "sll x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", x" + std::to_string(rs2));
     }
     if (rd != 0) reg32[rd] = reg32[rs1] << (reg32[rs2] & 0x1F); // Only lower 5-bits matters.
 }
 
 void RISCV32::base_I32::slt(uint32_t rd, uint32_t rs1, uint32_t rs2) {
     if (debug_mode == 1) {
-        print_inst(pc, "slt " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(rs2));
+        print_inst(pc, "slt x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", x" + std::to_string(rs2));
     }
     if (rd != 0) reg32[rd] = (int32_t)reg32[rs1] < (int32_t)reg32[rs2] ? 1 : 0;
 }
 
 void RISCV32::base_I32::sltu(uint32_t rd, uint32_t rs1, uint32_t rs2) {
     if (debug_mode == 1) {
-        print_inst(pc, "sltu " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(rs2));
+        print_inst(pc, "sltu x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", x" + std::to_string(rs2));
     }
     if (rd != 0) reg32[rd] = reg32[rs1] < reg32[rs2] ? 1 : 0;
 }
 
 void RISCV32::base_I32::xor_(uint32_t rd, uint32_t rs1, uint32_t rs2) {
     if (debug_mode == 1) {
-        print_inst(pc, "xor " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(rs2));
+        print_inst(pc, "xor x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", x" + std::to_string(rs2));
     }
     if (rd != 0) reg32[rd] = reg32[rs1] ^ reg32[rs2];
 }
 
 void RISCV32::base_I32::srl(uint32_t rd, uint32_t rs1, uint32_t rs2) {
     if (debug_mode == 1) {
-        print_inst(pc, "srl " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(rs2));
+        print_inst(pc, "srl x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", x" + std::to_string(rs2));
     }
     if (rd != 0) reg32[rd] = reg32[rs1] >> (reg32[rs2] & 0x1F); // Only lower 5-bits matters.
 }
 
 void RISCV32::base_I32::sra(uint32_t rd, uint32_t rs1, uint32_t rs2) {
     if (debug_mode == 1) {
-        print_inst(pc, "sra " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(rs2));
+        print_inst(pc, "sra x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", x" + std::to_string(rs2));
     }
     if (rd != 0) reg32[rd] = (int32_t)reg32[rs1] >> (reg32[rs2] & 0x1F); // Only lower 5-bits matters.
 }
 
 void RISCV32::base_I32::or_(uint32_t rd, uint32_t rs1, uint32_t rs2) {
     if (debug_mode == 1) {
-        print_inst(pc, "or " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(rs2));
+        print_inst(pc, "or x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", x" + std::to_string(rs2));
     }
     if (rd != 0) reg32[rd] = reg32[rs1] | reg32[rs2];
 }
 
 void RISCV32::base_I32::and_(uint32_t rd, uint32_t rs1, uint32_t rs2) {
     if (debug_mode == 1) {
-        print_inst(pc, "and " + std::to_string(rd) + ", " + std::to_string(rs1) + ", " + std::to_string(rs2));
+        print_inst(pc, "and x" + std::to_string(rd) + ", x" + std::to_string(rs1) + ", x" + std::to_string(rs2));
     }
     if (rd != 0) reg32[rd] = reg32[rs1] & reg32[rs2];
 }
